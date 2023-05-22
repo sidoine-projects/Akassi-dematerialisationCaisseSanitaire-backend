@@ -1,0 +1,14 @@
+création d'api
+Ces routes seront créées:
+J'utiliserai laravel spatie pour gérer les rôles et permissions
+permission
+rôles
+users
+patients
+actes médicaux
+paiement
+encaissement
+décaissement
+cartes sanitaires
+Laravel sanctum
+mot de passe:Rafiou95@
