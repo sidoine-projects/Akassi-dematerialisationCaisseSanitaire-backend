@@ -2,10 +2,16 @@
 
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+// use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\ActMedicalController;
+
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,8 +28,29 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('permissions', PermissionController::class);
-Route::apiResource('roles', RoleController::class);
+// Auth
+// Login
+Route::post('/login', [AuthController::class, 'login']);
+
+// Logout
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+// Update Password
+Route::put('/update-password', [AuthController::class, 'updatePassword'])->middleware('auth:sanctum');
+
+// Reset Password
+// Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('reset-password');
+
+
+Route::post('/request-password', [AuthController::class, 'requestPassword']);
+
+// Register
+Route::post('/register', [AuthController::class, 'register']);
+
+Route::apiResource('permissions', PermissionController::class)->middleware('auth:sanctum');
+Route::apiResource('roles', RoleController::class)->middleware('auth:sanctum');
 Route::apiResource('users', UserController::class);
-Route::apiResource('patients', PatientController::class);
-Route::post('droitusers', [RoleController::class, 'droitUsers']);
+Route::apiResource('patients', PatientController::class)->middleware('auth:sanctum');
+Route::apiResource('actmedical', ActMedicalController::class)->middleware('auth:sanctum');
+Route::post('droitusers', [RoleController::class, 'droitUsers'])->middleware('auth:sanctum');

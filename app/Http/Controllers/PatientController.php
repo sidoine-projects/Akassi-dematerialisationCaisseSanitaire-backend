@@ -110,8 +110,7 @@ class PatientController extends Controller
     // }
     public function update(Request $request, string $id)
     {
-        // Validation des données entrantes
-        $validatedData = $request->validate([
+        $this->validate($request, [
             'nom' => 'required|string',
             'prenom' => 'required|string',
             'email' => 'required|email|unique:patients,email,' . $id,
@@ -125,6 +124,7 @@ class PatientController extends Controller
             'autre' => 'nullable|string',
         ]);
 
+
         // Recherche du patient par ID
         $patient = Patient::find($id);
 
@@ -136,18 +136,20 @@ class PatientController extends Controller
             ], 404);
         }
 
+
         // Mise à jour des données du patient
-        $patient->nom = $validatedData['nom'];
-        $patient->prenom = $validatedData['prenom'];
-        $patient->email = $validatedData['email'];
-        $patient->adresse = $validatedData['adresse'];
-        $patient->age = $validatedData['age'];
-        $patient->telephone = $validatedData['telephone'];
-        $patient->whatsapp = $validatedData['whatsapp'];
-        $patient->profession = $validatedData['profession'];
-        $patient->urgencecontact = $validatedData['urgencecontact'];
-        $patient->sexe = $validatedData['sexe'];
-        $patient->autre = $validatedData['autre'];
+
+        $patient->nom = $request->nom;
+        $patient->prenom = $request->prenom;
+        $patient->email = $request->email;
+        $patient->adresse = $request->adresse;
+        $patient->age = $request->age;
+        $patient->telephone = $request->telephone;
+        $patient->whatsapp = $request->whatsapp;
+        $patient->profession = $request->profession;
+        $patient->urgencecontact = $request->urgencecontact;
+        $patient->sexe = $request->sexe;
+        $patient->autre = $request->autre;
         $patient->save();
 
         // Réponse JSON avec les données mises à jour du patient

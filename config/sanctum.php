@@ -62,6 +62,9 @@ return [
     'middleware' => [
         'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
         'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
+        'signed' => Illuminate\Routing\Middleware\ValidateSignature::class,
+        'throttle' => Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'sentry' => App\Http\Middleware\SentryContext::class,
     ],
 
 ];

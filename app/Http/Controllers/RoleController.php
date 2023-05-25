@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -39,19 +40,39 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+    //     //
+    //     $this->validate($request, [
+    //         'name' => 'required|string',
+    //         'description' => 'required|string',
+    //     ]);
+
+    //     $role = Role::create([
+    //         'name' => $request->name,
+    //         'description' => $request->description
+    //     ]);
+
+
+    //     $response = [
+    //         'success' => true,
+    //         'data' => $role,
+    //         'message' => 'Rôle créé avec succès.'
+    //     ];
+
+    //     return response()->json($response);
+    // }
     public function store(Request $request)
     {
-        //
-        $this->validate($request, [
-            'name' => 'required',
-            'description' => 'required|min:10',
-        ]);
+        // $this->validate($request, [
+        //     'name' => 'required|string',
+        //     'description' => 'required|string',
+        // ]);
 
         $role = Role::create([
-            'name' => $request->name,
-            'description' => $request->description
+            'name' => $request->input('name'),
+            'description' => $request->input('description')
         ]);
-
 
         $response = [
             'success' => true,
@@ -61,6 +82,7 @@ class RoleController extends Controller
 
         return response()->json($response);
     }
+
 
     /**
      * Display the specified resource.
@@ -116,10 +138,10 @@ class RoleController extends Controller
     public function update(Request $request, $id)
     {
         // Validation des données entrantes
-        $this->validate($request, [
-            'name' => 'required',
-            'description' => 'required|min:10',
-        ]);
+        // $this->validate($request, [
+        //     'name' => 'required|string',
+        //     'description' => 'required|string',
+        // ]);
 
         // Recherche du rôle à mettre à jour
         $role = Role::find($id);
@@ -134,6 +156,7 @@ class RoleController extends Controller
 
         // Mise à jour des données du rôle
         $role->name = $request->name;
+        $role->description = $request->description;
         $role->save();
 
         // Réponse JSON avec les données mises à jour du rôle

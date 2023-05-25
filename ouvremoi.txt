@@ -10,5 +10,75 @@ paiement
 encaissement
 décaissement
 cartes sanitaires
-Laravel sanctum
+Laravel sanctum:  https://laravel.com/docs/8.x/sanctum
 mot de passe:Rafiou95@
+
+
+public function update(Request $request, string $id)
+{
+    // Recherche du patient par ID
+    $patient = Patient::find($id);
+
+    // Vérification si le patient existe
+    if (!$patient) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Patient introuvable.'
+        ], 404);
+    }
+
+    // Pré-remplir le formulaire avec les données du patient existant
+    $formData = [
+        'nom' => $request->input('nom', $patient->nom),
+        'prenom' => $request->input('prenom', $patient->prenom),
+        'email' => $request->input('email', $patient->email),
+        'adresse' => $request->input('adresse', $patient->adresse),
+        'age' => $request->input('age', $patient->age),
+        'telephone' => $request->input('telephone', $patient->telephone),
+        'whatsapp' => $request->input('whatsapp', $patient->whatsapp),
+        'profession' => $request->input('profession', $patient->profession),
+        'urgencecontact' => $request->input('urgencecontact', $patient->urgencecontact),
+        'sexe' => $request->input('sexe', $patient->sexe),
+        'autre' => $request->input('autre', $patient->autre)
+    ];
+
+    // Valider les données du formulaire
+    $this->validate($request, [
+        'nom' => 'required|string',
+        'prenom' => 'required|string',
+        'email' => 'required|email|unique:patients,email,' . $id,
+        'adresse' => 'required|string',
+        'age' => 'required|numeric',
+        'telephone' => 'required|string',
+        'whatsapp' => 'required|string',
+        'profession' => 'required|string',
+        'urgencecontact' => 'required|string',
+        'sexe' => 'required|string',
+        'autre' => 'nullable|string',
+    ]);
+
+    // Mise à jour des données du patient en utilisant les valeurs du formulaire
+    $patient->nom = $formData['nom'];
+    $patient->prenom = $formData['prenom'];
+    $patient->email = $formData['email'];
+    $patient->adresse = $formData['adresse'];
+    $patient->age = $formData['age'];
+    $patient->telephone = $formData['telephone'];
+    $patient->whatsapp = $formData['whatsapp'];
+    $patient->profession = $formData['profession'];
+    $patient->urgencecontact = $formData['urgencecontact'];
+    $patient->sexe = $formData['sexe'];
+    $patient->autre = $formData['autre'];
+    $patient->save();
+
+    // Réponse JSON avec les données mises à jour du patient
+    return response()->json([
+        'success' => true,
+        'data' => $patient,
+        'message' => 'Informations du patient mises à jour avec succès.'
+    ]);
+}
+
+Assurez-vous d'avoir le bon alias d'importation pour la classe ValidationException. 
+Si vous rencontrez des erreurs, vous pouvez également exécuter 
+la commande composer dump-autoload pour recharger les classes.

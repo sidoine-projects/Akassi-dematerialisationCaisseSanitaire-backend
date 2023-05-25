@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\User;
+// use Illuminate\Foundation\Auth\User;
+
 
 class UserController extends Controller
 {
@@ -38,12 +40,12 @@ class UserController extends Controller
     {
         // Validation des données entrantes
         $validatedData = $request->validate([
-            'nom' => 'required|string',
+            'name' => 'required|string',
             'prenom' => 'required|string',
             'email' => 'required|email|unique:users',
             'nom_utilisateur' => 'required|string|unique:users',
             'adresse' => 'required|string',
-            'role' => 'required|string',
+            'role_id' => 'required|integer',
             'telephone' => 'required|string|min:8',
             'sexe' => 'required|string',
             'password' => 'required|string',
@@ -51,12 +53,12 @@ class UserController extends Controller
 
         // Création d'un nouvel utilisateur
         $user = User::create([
-            'nom' => $validatedData['nom'],
+            'name' => $validatedData['name'],
             'prenom' => $validatedData['prenom'],
             'email' => $validatedData['email'],
             'nom_utilisateur' => $validatedData['nom_utilisateur'],
             'adresse' => $validatedData['adresse'],
-            'role' => $validatedData['role'],
+            'role_id' => $validatedData['role_id'],
             'telephone' => $validatedData['telephone'],
             'sexe' => $validatedData['sexe'],
             'password' => bcrypt($validatedData['password']),
@@ -110,12 +112,12 @@ class UserController extends Controller
     {
         // Validation des données entrantes
         $validatedData = $request->validate([
-            'nom' => 'required|string',
+            'name' => 'required|string',
             'prenom' => 'required|string',
             'email' => 'required|email|unique:users,email,' . $id,
             'nom_utilisateur' => 'required|string|unique:users,nom_utilisateur,' . $id,
             'adresse' => 'required|string',
-            'role' => 'required|string',
+            'role_id' => 'required|string',
             'telephone' => 'required|string',
             'sexe' => 'required|string',
             'password' => 'required|string',
@@ -133,12 +135,13 @@ class UserController extends Controller
         }
 
         // Mise à jour des données de l'utilisateur
-        $user->nom = $validatedData['nom'];
+
+        $user->name = $validatedData['name'];
         $user->prenom = $validatedData['prenom'];
         $user->email = $validatedData['email'];
         $user->nom_utilisateur = $validatedData['nom_utilisateur'];
         $user->adresse = $validatedData['adresse'];
-        $user->role = $validatedData['role'];
+        $user->role_id = $validatedData['role_id'];
         $user->telephone = $validatedData['telephone'];
         $user->sexe = $validatedData['sexe'];
         $user->password = bcrypt($validatedData['password']);
