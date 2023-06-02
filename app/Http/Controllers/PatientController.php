@@ -7,13 +7,6 @@ use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    // public function index()
-    // {
-    //     //
-    // }
     public function index()
     {
         $users = Patient::all();
@@ -48,10 +41,20 @@ class PatientController extends Controller
             'sexe' => 'required',
             'urgencecontact' => 'required|string',
             'autre' => 'nullable|string',
+            'pays_id' => 'required|exists:pays,id',
+            'departement_id' => 'required|exists:departements,id',
+            'commune_id' => 'required|exists:communes,id',
+            'arrondissement_id' => 'required|exists:arrondissements,id',
+            'quartier_id' => 'required|exists:quartiers,id',
+            'situationmatrimoniale' => 'required|string',
         ]);
 
-        // Création du patient
+        // Récupérer l'ID de l'utilisateur connecté
+        $userId = auth()->user()->id;
+
+        // Création du patient avec user_id
         $patient = Patient::create([
+            'user_id' => $userId, // Ajouter user_id
             'nom' => $validatedData['nom'],
             'prenom' => $validatedData['prenom'],
             'age' => $validatedData['age'],
@@ -63,6 +66,12 @@ class PatientController extends Controller
             'sexe' => $validatedData['sexe'],
             'urgencecontact' => $validatedData['urgencecontact'],
             'autre' => $validatedData['autre'],
+            'pays_id' => $validatedData['pays_id'],
+            'departement_id' => $validatedData['departement_id'],
+            'commune_id' => $validatedData['commune_id'],
+            'arrondissement_id' => $validatedData['arrondissement_id'],
+            'quartier_id' => $validatedData['quartier_id'],
+            'situationmatrimoniale' => $validatedData['situationmatrimoniale'],
         ]);
 
         return response()->json([
@@ -73,19 +82,17 @@ class PatientController extends Controller
     }
 
 
+
+
     /**
      * Display the specified resource.
      */
-    // public function show(Patient $patient)
-    // {
-    //     //
-    // }
     public function show($id)
     {
-        // Recherche de la permission
+        // Recherche du patient
         $patient = Patient::find($id);
 
-        // Vérification si la permission existe
+        // Vérification si le patient existe
         if (!$patient) {
             return response()->json([
                 'success' => false,
@@ -93,7 +100,15 @@ class PatientController extends Controller
             ], 404);
         }
 
-        // Réponse JSON avec les données de la permission
+        // Vérification si le patient appartient à l'utilisateur connecté
+        if ($patient->user_id !== auth()->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès non autorisé.'
+            ], 403);
+        }
+
+        // Réponse JSON avec les données du patient
         return response()->json([
             'success' => true,
             'data' => $patient
@@ -101,13 +116,10 @@ class PatientController extends Controller
     }
 
 
+
     /**
      * Update the specified resource in storage.
      */
-    // public function update(Request $request, Patient $patient)
-    // {
-    //     //
-    // }
     public function update(Request $request, string $id)
     {
         $this->validate($request, [
@@ -122,8 +134,13 @@ class PatientController extends Controller
             'urgencecontact' => 'required|string',
             'sexe' => 'required|string',
             'autre' => 'nullable|string',
+            'pays_id' => 'required|exists:pays,id',
+            'departement_id' => 'required|exists:departements,id',
+            'commune_id' => 'required|exists:communes,id',
+            'arrondissement_id' => 'required|exists:arrondissements,id',
+            'quartier_id' => 'required|exists:quartiers,id',
+            'situationmatrimoniale' => 'required|string',
         ]);
-
 
         // Recherche du patient par ID
         $patient = Patient::find($id);
@@ -136,9 +153,15 @@ class PatientController extends Controller
             ], 404);
         }
 
+        // Vérification si le patient appartient à l'utilisateur connecté
+        if ($patient->user_id !== auth()->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès non autorisé.'
+            ], 403);
+        }
 
         // Mise à jour des données du patient
-
         $patient->nom = $request->nom;
         $patient->prenom = $request->prenom;
         $patient->email = $request->email;
@@ -150,6 +173,12 @@ class PatientController extends Controller
         $patient->urgencecontact = $request->urgencecontact;
         $patient->sexe = $request->sexe;
         $patient->autre = $request->autre;
+        $patient->pays_id = $request->pays_id;
+        $patient->departement_id = $request->departement_id;
+        $patient->commune_id = $request->commune_id;
+        $patient->arrondissement_id = $request->arrondissement_id;
+        $patient->quartier_id = $request->quartier_id;
+        $patient->situationmatrimoniale = $request->situationmatrimoniale;
         $patient->save();
 
         // Réponse JSON avec les données mises à jour du patient
@@ -160,9 +189,6 @@ class PatientController extends Controller
         ]);
     }
 
-
-
-
     /**
      * Remove the specified resource from storage.
      */
@@ -172,10 +198,10 @@ class PatientController extends Controller
     // }
     public function destroy(string $id)
     {
-        // Recherche de l'utilisateur par ID
+        // Recherche du patient par ID
         $patient = Patient::find($id);
 
-        // Vérification si l'utilisateur existe
+        // Vérification si le patient existe
         if (!$patient) {
             return response()->json([
                 'success' => false,
@@ -183,7 +209,15 @@ class PatientController extends Controller
             ], 404);
         }
 
-        // Suppression de l'utilisateur
+        // Vérification si le patient appartient à l'utilisateur connecté
+        if ($patient->user_id !== auth()->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès non autorisé.'
+            ], 403);
+        }
+
+        // Suppression du patient
         $patient->delete();
 
         // Réponse JSON avec un message de succès

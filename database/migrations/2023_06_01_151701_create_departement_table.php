@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-            $table->string('prenom');
-            
+        Schema::create('departements', function (Blueprint $table) {
+            $table->id();
+            $table->string('nom');
+            $table->unsignedBigInteger('pays_id');
+            $table->foreign('pays_id')->references('id')->on('pays');
+            $table->timestamps();
         });
     }
 
@@ -23,9 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-            $table->dropColumn('prenom');
-        });
+        Schema::dropIfExists('departements');
     }
 };

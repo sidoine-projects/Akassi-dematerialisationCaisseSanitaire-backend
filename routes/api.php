@@ -50,7 +50,7 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::apiResource('permissions', PermissionController::class)->middleware('auth:sanctum');
 Route::apiResource('roles', RoleController::class)->middleware('auth:sanctum');
-Route::apiResource('users', UserController::class);
-Route::apiResource('patients', PatientController::class)->middleware('auth:sanctum');
+Route::apiResource('users', UserController::class)->middleware('auth:sanctum');
+Route::apiResource('patients', PatientController::class);
 Route::apiResource('actmedical', ActMedicalController::class)->middleware('auth:sanctum');
 Route::post('droitusers', [RoleController::class, 'droitUsers'])->middleware('auth:sanctum');

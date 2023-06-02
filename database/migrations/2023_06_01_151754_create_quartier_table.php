@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-            $table->dropColumn('role');
+        Schema::create('quartiers', function (Blueprint $table) {
+            $table->id();
+            $table->string('nom');
+            $table->unsignedBigInteger('arrondissement_id');
+            $table->foreign('arrondissement_id')->references('id')->on('arrondissements');
+            $table->timestamps();
         });
     }
 
@@ -22,9 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-            $table->string('role'); // Recréez la colonne si vous souhaitez la restaurer dans la méthode "down"
-        });
+        Schema::dropIfExists('quartiers');
     }
 };

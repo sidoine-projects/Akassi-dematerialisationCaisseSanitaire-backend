@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedBigInteger('user_id');
             $table->string('nom');
             $table->string('prenom');
             $table->integer('age');
@@ -23,8 +24,20 @@ return new class extends Migration
             $table->string('profession')->nullable();
             $table->string('sexe');
             $table->string('urgencecontact');
+            $table->string('situationmatrimoniale')->nullable();
+            $table->unsignedBigInteger('pays_id');
+            $table->unsignedBigInteger('departement_id');
+            $table->unsignedBigInteger('commune_id');
+            $table->unsignedBigInteger('arrondissement_id');
+            $table->unsignedBigInteger('quartier_id');
             $table->text('autre')->nullable();
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('pays_id')->references('id')->on('pays');
+            $table->foreign('departement_id')->references('id')->on('departements');
+            $table->foreign('commune_id')->references('id')->on('communes');
+            $table->foreign('arrondissement_id')->references('id')->on('arrondissements');
+            $table->foreign('quartier_id')->references('id')->on('quartiers');
         });
     }
 

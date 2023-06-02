@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('medical_acts', function (Blueprint $table) {
             //
-           
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
@@ -22,14 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('medical_acts', function (Blueprint $table) {
             //
-            $table->dropColumn('prenom');
-            $table->dropColumn('nom_utilisateur');
-            $table->dropColumn('adresse');
-            $table->dropColumn('role');
-            $table->dropColumn('telephone');
-            $table->dropColumn('sexe');
+            $table->dropForeign(['user_id']);
+            $table->dropColumn('user_id');
         });
     }
 };

@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
+use ReCaptcha\ReCaptcha;
+
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPasswordEmail;
 use Illuminate\Support\Facades\Password;
@@ -40,29 +42,97 @@ class AuthController extends Controller
     //         'message' => 'Invalid credentials',
     //     ], 401);
     // }
+    // public function login(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|email|max:255',
+    //         'password' => 'required',
+    //         'recaptcha_token' => 'required',
+    //     ]);
+
+
+    //     $recaptchaToken = $request->input('recaptcha_token');
+    //     $recaptchaResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+    //         'secret' => config('services.recaptcha.secret_key'),
+    //         'response' => $recaptchaToken,
+    //     ]);
+
+    //     if ($recaptchaResponse->json('success') !== true) {
+    //         throw ValidationException::withMessages([
+    //             'recaptcha_token' => 'Failed to validate reCAPTCHA.',
+    //         ]);
+    //     }
+
+    //     $credentials = $request->only('email', 'password');
+
+    //     if (Auth::attempt($credentials)) {
+    //         $user = Auth::user();
+    //         $token = $user->createToken('authToken')->plainTextToken;
+
+    //         return response()->json([
+    //             'token' => $token,
+    //             'user' => $user,
+    //             'message' => 'Authenticated successfully',
+    //         ], 200);
+    //     }
+
+    //     return response()->json([
+    //         'message' => 'Invalid credentials',
+    //     ], 401);
+    // }
+    // public function login(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|email|max:255',
+    //         'password' => 'required',
+    //         // 'recaptcha_token' => 'required',
+    //     ]);
+
+    // Vérifiez le reCAPTCHA
+    // $recaptchaToken = $request->input('recaptcha_token');
+    // $recaptchaResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+    //     'secret' => config('services.recaptcha.secret_key'),
+    //     'response' => $recaptchaToken,
+    // ]);
+
+    // if (!$recaptchaResponse->json('success')) {
+    //     throw ValidationException::withMessages([
+    //         'recaptcha_token' => 'Failed to validate reCAPTCHA.',
+    //     ]);
+    // }
+
+    //     $credentials = $request->only('email', 'password');
+
+    //     if (Auth::attempt($credentials)) {
+    //         $user = Auth::user();
+    //         $token = $user->createToken('authToken')->plainTextToken;
+
+    //         return response()->json([
+    //             'token' => $token,
+    //             'user' => $user,
+    //             'message' => 'Authentification réussie',
+    //         ], 200);
+    //     }
+
+    //     return response()->json([
+    //         'message' => 'Identifiants invalides',
+    //     ], 401);
+    // }
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|max:255|unique:users',
+        $credentials = $request->validate([
+            'email' => 'required|email',
             'password' => 'required',
-            'recaptcha_token' => 'required',
+            'g-recaptcha-response' => 'required', // Champ reCAPTCHA
         ]);
 
-        // Vérifiez le reCAPTCHA
-        $recaptchaToken = $request->input('recaptcha_token');
-        $recaptchaResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => config('services.recaptcha.secret_key'),
-            'response' => $recaptchaToken,
-        ]);
 
-        if ($recaptchaResponse->json('success') !== true) {
-            throw ValidationException::withMessages([
-                'recaptcha_token' => 'Failed to validate reCAPTCHA.',
-            ]);
+        //Vérifier le reCAPTCHA
+        $recaptcha = new ReCaptcha(config('app.RECAPTCHA_SECRET_KEY'));
+        $response = $recaptcha->verify($request->input('g-recaptcha-response'), $request->ip());
+        if (!$response->isSuccess()) {
+            return response()->json(['message' => 'reCAPTCHA validation failed'], 401);
         }
-
-        $credentials = $request->only('email', 'password');
-
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
@@ -70,14 +140,13 @@ class AuthController extends Controller
             return response()->json([
                 'token' => $token,
                 'user' => $user,
-                'message' => 'Authenticated successfully',
+                'message' => 'OK',
             ]);
+        } else {
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
-
-        return response()->json([
-            'message' => 'Invalid credentials',
-        ], 401);
     }
+
 
 
     public function logout(Request $request)
