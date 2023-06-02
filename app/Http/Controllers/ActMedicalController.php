@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActMedical;
+use App\Models\MedicalAct;
 use Illuminate\Http\Request;
 
 class ActMedicalController extends Controller
@@ -16,7 +16,7 @@ class ActMedicalController extends Controller
         $userId = auth()->user()->id;
 
         // Récupérer les actes médicaux de l'utilisateur
-        $medicalActs = ActMedical::where('user_id', $userId)->get();
+        $medicalActs = MedicalAct::where('user_id', $userId)->get();
 
         // Réponse JSON avec les actes médicaux de l'utilisateur
         return response()->json([
@@ -38,13 +38,14 @@ class ActMedicalController extends Controller
             'name' => 'required|string',
             'description' => 'required|string',
             'tarif' => 'required|numeric',
+            'user_id' => 'required|exists:users,id',
         ]);
 
         // Récupérer l'ID de l'utilisateur connecté
         $userId = auth()->user()->id;
 
         // Création de l'acte médical avec user_id
-        $medicalAct = ActMedical::create([
+        $medicalAct = MedicalAct::create([
             'code' => $validatedData['code'],
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
@@ -66,7 +67,7 @@ class ActMedicalController extends Controller
     public function show(string $id)
     {
         // Recherche de l'acte médical par ID
-        $medicalAct = ActMedical::find($id);
+        $medicalAct = MedicalAct::find($id);
 
         // Vérification si l'acte médical existe
         if (!$medicalAct) {
@@ -102,10 +103,11 @@ class ActMedicalController extends Controller
             'name' => 'required|string',
             'description' => 'required|string',
             'tarif' => 'required|numeric',
+            'user_id' => 'required|exists:users,id',
         ]);
 
         // Recherche de l'acte médical par ID
-        $medicalAct = ActMedical::find($id);
+        $medicalAct = MedicalAct::find($id);
 
         // Vérification si l'acte médical existe
         if (!$medicalAct) {
@@ -144,7 +146,7 @@ class ActMedicalController extends Controller
     public function destroy(string $id)
     {
         // Recherche de l'acte médical par ID
-        $medicalAct = ActMedical::find($id);
+        $medicalAct = MedicalAct::find($id);
 
         // Vérification si l'acte médical existe
         if (!$medicalAct) {

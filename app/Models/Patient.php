@@ -21,6 +21,12 @@ class Patient extends Model
         'urgencecontact',
         'autre',
         'situationmatrimoniale',
+        'user_id',
+        'pays_id',
+        'departement_id',
+        'quartier_id',
+        'commune_id',
+        'arrondissement_id',
     ];
 
     public function pays()
