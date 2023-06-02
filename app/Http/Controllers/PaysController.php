@@ -32,7 +32,7 @@ class PaysController extends Controller
         ]);
 
         $pays = new Pays();
-        $pays->name = $request->input('nom');
+        $pays->nom = $request->input('nom');
 
         // Enregistrez le pays dans la base de données
         $pays->save();

@@ -34,7 +34,7 @@ class DepartementController extends Controller
         ]);
 
         $departement = new Departement();
-        $departement->name = $request->input('nom');
+        $departement->nom = $request->input('nom');
         $departement->pays_id = $request->input('pays_id');
 
         // Enregistrez le département dans la base de données
@@ -75,7 +75,7 @@ class DepartementController extends Controller
         ]);
 
         $departement = Departement::find($id);
-        $departement->name = $request->input('nom');
+        $departement->nom = $request->input('nom');
 
         // Mettez à jour les autres champs du département si nécessaire
 
