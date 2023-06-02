@@ -123,16 +123,16 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'g-recaptcha-response' => 'required', // Champ reCAPTCHA
+            // 'g-recaptcha-response' => 'required', // Champ reCAPTCHA
         ]);
 
 
-        //Vérifier le reCAPTCHA
-        $recaptcha = new ReCaptcha(config('app.RECAPTCHA_SECRET_KEY'));
-        $response = $recaptcha->verify($request->input('g-recaptcha-response'), $request->ip());
-        if (!$response->isSuccess()) {
-            return response()->json(['message' => 'reCAPTCHA validation failed'], 401);
-        }
+        // //Vérifier le reCAPTCHA
+        // $recaptcha = new ReCaptcha(config('app.RECAPTCHA_SECRET_KEY'));
+        // $response = $recaptcha->verify($request->input('g-recaptcha-response'), $request->ip());
+        // if (!$response->isSuccess()) {
+        //     return response()->json(['message' => 'reCAPTCHA validation failed'], 401);
+        // }
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
